@@ -1,0 +1,11 @@
+version: "3.4"
+services:
+  generate:
+    image: alileza/grpc-gen:0.4.1
+    entrypoint: ["sh"]
+    command: ["/generate.sh", "/example.proto", "/out"]
+    volumes: [
+      "./generate.sh:/generate.sh",
+      "./example.proto:/proto/example.proto",
+      "./autogen:/out"
+    ]
