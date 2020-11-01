@@ -25,3 +25,4 @@ RUN make build
 RUN mv ${PROJECT_DIR}/bin/example /bin/example
 
 ENTRYPOINT ["example"]
+CMD ["serve"]
