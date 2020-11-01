@@ -9,9 +9,9 @@ jobs:
         runs-on: ${{ matrix.os }}
         steps:
         - name: Install Go
-            uses: actions/setup-go@v2
-            with:
-                go-version: ${{ matrix.go-version }}
+          uses: actions/setup-go@v2
+          with:
+            go-version: ${{ matrix.go-version }}
         - name: Checkout code
             uses: actions/checkout@v2
         - name: Test
@@ -21,18 +21,18 @@ jobs:
         runs-on: ubuntu-18.04
         steps:
             - name: Checkout
-            uses: actions/checkout@v2
+              uses: actions/checkout@v2
             
             - name: Extract branch name.
-            shell: bash
-            run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-            id: extract_branch
+              shell: bash
+              run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+              id: extract_branch
 
             - name: Build docker image
-            shell: bash
-            env: 
+              shell: bash
+              env: 
                 ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-            run: |
+              run: |
                 whoami
                 SHORT_REV=$(git rev-parse --short HEAD)
                 PROJECT_NAME="aixp"
