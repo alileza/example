@@ -13,8 +13,9 @@ protoc -I /proto --proto_path=/third_party \
                  --validate_out=lang=go:$2/pb \
                  --js_out=import_style=commonjs,binary:$2/ts \
                  --ts_proto_out=$2/ts  \
-                 --ts_proto_opt=outputClientImpl=true \
+                 --ts_proto_opt=outputClientImpl=false \
                  --ts_proto_opt=forceLong=long \
                  --ts_proto_opt=env=browser \
-                 --ts_proto_opt=lowerCaseServiceMethods=true
+                 --ts_proto_opt=lowerCaseServiceMethods=true \
+                 --ts_proto_opt=useOptionals=false
                  

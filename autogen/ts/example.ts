@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Reader, Writer } from 'protobufjs/minimal';
+import { Writer, Reader } from 'protobufjs/minimal';
 
 
 export interface Empty {
@@ -39,34 +39,6 @@ export interface ExampleServiceV1 {
   status(request: Empty): Promise<StatusResponse>;
 
   hello(request: HelloRequest): Promise<HelloResponse>;
-
-}
-
-export class ExampleServiceV1ClientImpl implements ExampleServiceV1 {
-
-  private readonly rpc: Rpc;
-
-  constructor(rpc: Rpc) {
-    this.rpc = rpc;
-  }
-
-  status(request: Empty): Promise<StatusResponse> {
-    const data = Empty.encode(request).finish();
-    const promise = this.rpc.request("example.ExampleServiceV1", "status", data);
-    return promise.then(data => StatusResponse.decode(new Reader(data)));
-  }
-
-  hello(request: HelloRequest): Promise<HelloResponse> {
-    const data = HelloRequest.encode(request).finish();
-    const promise = this.rpc.request("example.ExampleServiceV1", "hello", data);
-    return promise.then(data => HelloResponse.decode(new Reader(data)));
-  }
-
-}
-
-interface Rpc {
-
-  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 
 }
 
