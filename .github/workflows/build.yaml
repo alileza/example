@@ -45,10 +45,7 @@ jobs:
                 PROJECT_NAME="example"
                 IMAGE_NAME=example
                 IMAGE_TAG="$SHORT_REV-${{ steps.extract_branch.outputs.branch }}"
-                CONTEXT=example
-                echo "logging in..."
                 echo "${{ secrets.ACCESS_TOKEN }}" | docker login -u "alileza" --password-stdin https://docker.pkg.github.com 
                 TAG="docker.pkg.github.com/alileza/$PROJECT_NAME/$IMAGE_NAME:$IMAGE_TAG"
-                echo "building an image..."
-                docker build -t $TAG $CONTEXT
+                docker build -t $TAG .
                 docker push $TAG
