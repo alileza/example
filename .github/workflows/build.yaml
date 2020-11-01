@@ -1,39 +1,31 @@
-on: [push, pull_request]
-name: Test
+name: ci
+
+on: push
+
 jobs:
-  test:
-    strategy:
-      matrix:
-        go-version: [1.15.x]
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+  main:
+    runs-on: unbuntu-latest
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: ${{ matrix.go-version }}
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Extract branch name.
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
 
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Test
-      run: make test
-
-    - name: Extract branch name.
-      shell: bash
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      id: extract_branch
-
-    - name: Build example image
-      shell: bash
-      env: 
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run: | 
-        SHORT_REV=$(git rev-parse --short HEAD)
-        PROJECT_NAME="example"
-        IMAGE_NAME=example
-        IMAGE_TAG="$SHORT_REV-${{ steps.extract_branch.outputs.branch }}"
-        CONTEXT=example
-        TAG="docker.pkg.github.com/alileza/$PROJECT_NAME/$IMAGE_NAME:$IMAGE_TAG"
-        docker build -t $TAG $CONTEXT
-        docker push $TAG
+      - name: Build docker image
+        shell: bash
+        env: 
+            ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: |
+            whoami
+            SHORT_REV=$(git rev-parse --short HEAD)
+            PROJECT_NAME="aixp"
+            IMAGE_NAME=dashboard
+            IMAGE_TAG="$SHORT_REV-${{ steps.extract_branch.outputs.branch }}"
+            CONTEXT=backend
+            echo "${{ secrets.ACCESS_TOKEN }}" | docker login -u "alileza" --password-stdin https://docker.pkg.github.com 
+            TAG="docker.pkg.github.com/alileza/$PROJECT_NAME/$IMAGE_NAME:$IMAGE_TAG"
+            docker build -t $TAG $CONTEXT
+            docker push $TAG
