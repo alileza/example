@@ -1,0 +1,35 @@
+on: [push, pull_request]
+name: Test
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [1.15.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Test
+      run: make test
+
+    - name: Build dashboard image
+      shell: bash
+      env: 
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      run: | 
+        SHORT_REV=$(git rev-parse --short HEAD)
+        PROJECT_NAME="example"
+        IMAGE_NAME=example
+        IMAGE_TAG="$SHORT_REV-${{ steps.extract_branch.outputs.branch }}"
+        CONTEXT=example
+        echo "${{ secrets.ACCESS_TOKEN }}" | docker login -u "alileza" --password-stdin https://docker.pkg.github.com 
+        TAG="docker.pkg.github.com/alileza/$PROJECT_NAME/$IMAGE_NAME:$IMAGE_TAG"
+        docker build -t $TAG $CONTEXT
+        docker push $TAG
