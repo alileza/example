@@ -1,24 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import './App.css';
 
 function App() {
+  const [version, setVersion] = useState<any>({});
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const result = await axios.get('/version', { headers: {'Accept': 'application/json'} });
+        setVersion(result.data)
+      } catch (e) {
+        console.error(e)
+      }
+    };
+    init();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      Hello World, if you want to see api documentation it should be somewhere <a href="/api/docs">here</a><br/>
+      
+      Version:
+      <pre>
+        {JSON.stringify(version, null, 2)}
+      </pre>
     </div>
   );
 }

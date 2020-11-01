@@ -2,8 +2,10 @@ package version
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
+	"net/http"
 	"runtime"
 	"strings"
 
@@ -61,4 +63,28 @@ func NewCollector(program string) *prometheus.GaugeVec {
 	)
 	buildInfo.WithLabelValues(Version, Revision, Branch, GoVersion).Set(1)
 	return buildInfo
+}
+
+func Handler() http.Handler {
+	m := map[string]string{
+		"program":   AppName,
+		"version":   Version,
+		"revision":  Revision,
+		"branch":    Branch,
+		"buildUser": BuildUser,
+		"buildDate": BuildDate,
+		"goVersion": GoVersion,
+	}
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Header.Get("Accept") {
+		case "application/json":
+			if err := json.NewEncoder(w).Encode(m); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		default:
+			fmt.Fprintf(w, Print())
+		}
+	})
 }

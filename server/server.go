@@ -24,6 +24,7 @@ import (
 
 	pb "github.com/alileza/example/autogen/pb"
 	"github.com/alileza/example/services"
+	"github.com/alileza/example/version"
 )
 
 type Server struct {
@@ -53,6 +54,7 @@ func (s *Server) Run(ctx context.Context) error {
 	mux.Handle("/api/", runtimeMux)
 	mux.Handle("/api/docs", docsHandler(s.SwaggerDocsFilePath))
 	mux.Handle("/metrics", promhttp.Handler())
+	mux.Handle("/version", version.Handler())
 
 	unaryMiddlewares, streamMiddlewares := initiateGRPCMiddlewares(s.Logger)
 	s.grpcSrv = grpc.NewServer(
