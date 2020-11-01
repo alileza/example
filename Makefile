@@ -12,8 +12,11 @@ ldflags := "-X $(version_pkg).AppName=$(project_name) -X $(version_pkg).Version=
 
 .PHONY: all build run test test-unit test-cov
 
-build:
+build:	
 	@go build -mod=vendor -ldflags $(ldflags) -o ./bin/$(project_name) .
+
+build-fe:
+	@cd ui && yarn build
 
 run:
 	@./bin/$(project_name) serve

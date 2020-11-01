@@ -29,6 +29,7 @@ import (
 type Server struct {
 	ListenAddress       string
 	Logger              *logrus.Logger
+	UIDirectoryPath     string
 	SwaggerDocsFilePath string
 
 	httpSrv *http.Server
@@ -48,6 +49,7 @@ func (s *Server) Run(ctx context.Context) error {
 	runtimeMux := createRuntimeMux()
 
 	mux := http.NewServeMux()
+	mux.Handle("/", uiMux(s.UIDirectoryPath))
 	mux.Handle("/api/", runtimeMux)
 	mux.Handle("/api/docs", docsHandler(s.SwaggerDocsFilePath))
 	mux.Handle("/metrics", promhttp.Handler())
@@ -73,7 +75,9 @@ func (s *Server) Run(ctx context.Context) error {
 	g.Add(func() error { return s.httpSrv.Serve(httpL) }, printErr)
 	g.Add(func() error { return m.Serve() }, printErr)
 
-	s.Logger.Infof("Start serving on %s", s.ListenAddress)
+	s.Logger.Infof("Start serving on address %s", s.ListenAddress)
+	s.Logger.Infof("UI directory path %s", s.UIDirectoryPath)
+	s.Logger.Infof("Docs file path %s", s.SwaggerDocsFilePath)
 	return g.Run()
 }
 
