@@ -4,8 +4,15 @@ jobs:
     test:
         strategy:
             matrix:
-                go-version: [1.14.x, 1.15.x]
-                os: [ubuntu-latest, macos-latest, windows-latest]
+                go-version: [
+                    1.14.x, 
+                    1.15.x,
+                ]
+                os: [
+                    ubuntu-latest,
+                    macos-latest, 
+                    windows-latest
+                ]
         runs-on: ${{ matrix.os }}
         steps:
         - name: Install Go
@@ -39,7 +46,9 @@ jobs:
                 IMAGE_NAME=example
                 IMAGE_TAG="$SHORT_REV-${{ steps.extract_branch.outputs.branch }}"
                 CONTEXT=example
+                echo "logging in..."
                 echo "${{ secrets.ACCESS_TOKEN }}" | docker login -u "alileza" --password-stdin https://docker.pkg.github.com 
                 TAG="docker.pkg.github.com/alileza/$PROJECT_NAME/$IMAGE_NAME:$IMAGE_TAG"
+                echo "building an image..."
                 docker build -t $TAG $CONTEXT
                 docker push $TAG
