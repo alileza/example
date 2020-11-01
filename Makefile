@@ -13,7 +13,7 @@ ldflags := "-X $(version_pkg).AppName=$(project_name) -X $(version_pkg).Version=
 .PHONY: all build run test test-unit test-cov
 
 build:
-	@go build -ldflags $(ldflags) -o ./bin/$(project_name) .
+	@go build -mod=vendor -ldflags $(ldflags) -o ./bin/$(project_name) .
 
 run:
 	@./bin/$(project_name) serve

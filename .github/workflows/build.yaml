@@ -19,7 +19,12 @@ jobs:
     - name: Test
       run: make test
 
-    - name: Build dashboard image
+    - name: Extract branch name.
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
+
+    - name: Build example image
       shell: bash
       env: 
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
