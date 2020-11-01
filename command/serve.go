@@ -9,9 +9,11 @@ import (
 )
 
 var ServeInputs struct {
-	ListenAddress string
-	UIDir         string
-	SwaggerPath   string
+	ListenAddress  string
+	UIDir          string
+	UIProxyEnabled bool
+	UIProxyURL     string
+	SwaggerPath    string
 }
 
 var ServeCommand *cli.Command = &cli.Command{
@@ -29,6 +31,16 @@ var ServeCommand *cli.Command = &cli.Command{
 			Destination: &ServeInputs.UIDir,
 			Value:       os.Getenv("PWD") + "/ui/build",
 		},
+		&cli.BoolFlag{
+			Name:        "ui-proxy-enabled",
+			Destination: &ServeInputs.UIProxyEnabled,
+			Value:       false,
+		},
+		&cli.StringFlag{
+			Name:        "ui-proxy-url",
+			Destination: &ServeInputs.UIProxyURL,
+			Value:       "http://localhost:3000",
+		},
 		&cli.StringFlag{
 			Name:        "swagger-path",
 			Destination: &ServeInputs.SwaggerPath,
@@ -42,6 +54,8 @@ var ServeCommand *cli.Command = &cli.Command{
 			Logger:              logger,
 			ListenAddress:       ServeInputs.ListenAddress,
 			UIDirectoryPath:     ServeInputs.UIDir,
+			UIProxyEnabled:      ServeInputs.UIProxyEnabled,
+			UIProxyURL:          ServeInputs.UIProxyURL,
 			SwaggerDocsFilePath: ServeInputs.SwaggerPath,
 		}
 

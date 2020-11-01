@@ -31,6 +31,8 @@ type Server struct {
 	ListenAddress       string
 	Logger              *logrus.Logger
 	UIDirectoryPath     string
+	UIProxyEnabled      bool
+	UIProxyURL          string
 	SwaggerDocsFilePath string
 
 	httpSrv *http.Server
@@ -50,7 +52,11 @@ func (s *Server) Run(ctx context.Context) error {
 	runtimeMux := createRuntimeMux()
 
 	mux := http.NewServeMux()
-	mux.Handle("/", uiMux(s.UIDirectoryPath))
+	if s.UIProxyEnabled {
+		mux.Handle("/", uiProxyMux(s.UIProxyURL))
+	} else {
+		mux.Handle("/", uiFileServerMux(s.UIDirectoryPath))
+	}
 	mux.Handle("/api/", runtimeMux)
 	mux.Handle("/api/docs", docsHandler(s.SwaggerDocsFilePath))
 	mux.Handle("/metrics", promhttp.Handler())

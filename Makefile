@@ -18,6 +18,9 @@ build:
 build-fe:
 	@cd ui && yarn build
 
+dev:
+	@./bin/$(project_name) serve --ui-proxy-enabled
+
 run:
 	@./bin/$(project_name) serve
 
