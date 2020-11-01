@@ -1,9 +1,8 @@
 package command
 
 import (
-	"log"
-
 	"github.com/alileza/example/server"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -29,12 +28,14 @@ var ServeCommand *cli.Command = &cli.Command{
 		},
 	},
 	Action: func(c *cli.Context) error {
+		logger := logrus.New()
+
 		srv := server.Server{
+			Logger:              logger,
 			ListenAddress:       ServeInputs.ListenAddress,
 			SwaggerDocsFilePath: ServeInputs.SwaggerPath,
 		}
 
-		log.Printf("Start serving on %s", ServeInputs.ListenAddress)
 		return srv.Run(c.Context)
 	},
 }

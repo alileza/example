@@ -11,9 +11,38 @@
     "application/json"
   ],
   "paths": {
+    "/api/v1/hello": {
+      "get": {
+        "operationId": "ExampleServiceV1_Hello",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/exampleHelloResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ExampleServiceV1"
+        ]
+      }
+    },
     "/api/v1/status": {
       "get": {
-        "summary": "Status returns",
         "operationId": "ExampleServiceV1_Status",
         "responses": {
           "200": {
@@ -36,6 +65,14 @@
     }
   },
   "definitions": {
+    "exampleHelloResponse": {
+      "type": "object",
+      "properties": {
+        "world": {
+          "type": "string"
+        }
+      }
+    },
     "exampleStatusResponse": {
       "type": "object",
       "properties": {

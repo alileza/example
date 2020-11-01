@@ -15,6 +15,7 @@ func main() {
 		Usage: "Example web server",
 		Commands: []*cli.Command{
 			command.ServeCommand,
+			command.VersionCommand,
 		},
 	}
 	if err := app.Run(os.Args); err != nil {

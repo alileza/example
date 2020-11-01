@@ -5,7 +5,7 @@ package example;
 option go_package = ".;example";
 
 import "google/api/annotations.proto";
-import "validate/validate.proto";
+import "protoc-gen-validate/validate/validate.proto";
 
 message Empty{}
 
@@ -15,8 +15,12 @@ message StatusResponse {
 }
 
 message HelloRequest{
-  string name = 1 [(validate.rules).message.required = true];
+  string name = 1 [(validate.rules).string = {
+                      pattern:   ".*$",
+                      max_bytes: 256
+                   }];
 }
+
 message HelloResponse{
   string world = 1;
 }
