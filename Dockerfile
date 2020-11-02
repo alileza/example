@@ -1,28 +1,29 @@
-ARG PROJECT_DIR="/go/src/example"
+# build frontend static files
+FROM node:12.18.3-alpine AS builder-ts
 
-FROM node:12.18.3-alpine AS builder-fe
+COPY . /app
 
-COPY ./ui /app
-
-WORKDIR /app
+WORKDIR /app/ui
 
 RUN yarn install
 RUN yarn build
 
-
-FROM golang:1.15.2-alpine AS builder
-
-ARG PROJECT_DIR
-WORKDIR ${PROJECT_DIR}
-
-COPY . .
-
+# build binary
+FROM golang:1.15.2-alpine AS builder-go
 RUN apk add make git
 
-COPY --from=builder-fe /app/build /ui/build/
+WORKDIR /go/src/example
 
+COPY . .
 RUN make build
-RUN mv ${PROJECT_DIR}/bin/example /bin/example
+
+
+# final image
+FROM alpine:3.12.1
+
+COPY --from=builder-ts /app/ui/build /ui/build/
+COPY --from=builder-go /go/src/example/bin/example /bin/example
+COPY --from=builder-go /go/src/example/autogen/docs /docs
 
 ENTRYPOINT ["example"]
-CMD ["serve"]
+CMD ["serve", "--swagger-path=/docs/example.swagger.json"]
