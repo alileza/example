@@ -16,6 +16,7 @@ func main() {
 		Commands: []*cli.Command{
 			command.ServeCommand,
 			command.VersionCommand,
+			command.MigrationCommand,
 		},
 	}
 	if err := app.Run(os.Args); err != nil {

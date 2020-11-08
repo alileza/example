@@ -9,3 +9,21 @@ services:
       "./example.proto:/proto/example.proto",
       "./autogen:/out"
     ]
+
+  postgres:
+    image: postgres:12
+    ports: ["5432:5432"]
+    environment: 
+      POSTGRES_USER: example
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: example
+      
+  pgweb:
+    container_name: pgweb:0.11.7
+    restart: always
+    image: sosedoff/pgweb
+    ports: ["8081:8081"]
+    environment:
+      - DATABASE_URL=postgres://example:example@postgres:5432/example?sslmode=disable
+    depends_on:
+      - postgres
